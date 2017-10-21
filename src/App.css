@@ -1,0 +1,80 @@
+#root{
+  height: 100%;
+}
+.root1{
+  height: 100%;
+}
+.root1 .logo {
+  height: 32px;
+  background: #333;
+  border-radius: 6px;
+  margin: 16px;
+}
+.root1 .ant-layout{
+  height: 100%;
+  transition: all .1s;
+}
+.root1 .ant-layout-sider-collapsed .anticon {
+  font-size: 16px;
+  margin-left: 8px;
+}
+
+.root1 .ant-layout-sider-collapsed .nav-text {
+  display: none;
+}
+
+.root1 .ant-layout-sider-collapsed .ant-menu-submenu-vertical > .ant-menu-submenu-title:after {
+  display: none;
+}
+
+.set{
+  float: right;
+  cursor: pointer;
+  margin-right: 20px;
+  font-size: 14px;
+}
+.little-nav{
+  margin: 10px 0;
+}
+
+
+.main-content{
+  background: #fff;
+  min-height: 100%;
+}
+/*login-page*/
+.login-page{
+  width: 300px;
+  height: 300px;
+  margin: 0 auto;
+  padding-top: 50px;
+  text-align: center;
+}
+/*detail详情*/
+.post-detail .title{
+  margin-bottom: 10px;
+}
+.post-detail-con{
+  background-color: #FFF;
+}
+.detail-pic{
+  margin: 10px 0;
+
+}
+.detail-pic img{
+  border: 1px #ccc solid;
+}
+/*编辑文章*/
+.quill {
+  background: #fff;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.btn-wrap{
+  margin-top: 10px;
+  text-align: right;
+}
+.btn-wrap button{
+  display: inline-block;
+  margin-left: 10px;
+}
