@@ -28,7 +28,9 @@ const dropmenu = (
       <a href="/Home">2nd menu item</a>
     </Menu.Item>
     <Menu.Divider />
-    <Menu.Item key="3">3d menu item</Menu.Item>
+    <Menu.Item key="3">
+      <a href='/' onClick={loginout}>退出</a>
+    </Menu.Item>
   </Menu>
 );
 
@@ -75,7 +77,11 @@ const Home = withRouter((props) => {
     </div>
   );
 });
-
+function loginout(){
+  Cookie.remove('name')
+  Cookie.remove('token')
+  localStorage.current_key = ['1'];
+}
 // Cookie.remove('name')
 // Cookie.remove('token')
 
@@ -96,6 +102,7 @@ class LoginSuccess extends Component{
   }
   componentWillMount(){
     // 刷新后能找到对应的菜单
+
     let key = localStorage.current_key || ['1'];
     let key_arr = [];
     if(key === '7'||key === '8'||key === '9'||key === '10'||key === '11'){
@@ -258,7 +265,7 @@ class route extends Component {
     }
     return (
       <div className="login-page">        
-        <Form onSubmit={this.login} className="login-form">
+        <Form className="login-form">
           <FormItem>
               <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="Username" value={this.state.username} onChange={this.setUsername} />
           </FormItem>
@@ -266,7 +273,7 @@ class route extends Component {
               <Input prefix={<Icon type="lock" style={{ fontSize: 13 }} />} type="password" placeholder="Password" value={this.state.password} onChange={this.setPassword}/>
           </FormItem>
           <FormItem>
-            <Button type="primary" htmlType="submit" className="login-form-button">
+            <Button onClick={this.login} type="primary" htmlType="submit" className="login-form-button">
               Log in
             </Button>
           </FormItem>

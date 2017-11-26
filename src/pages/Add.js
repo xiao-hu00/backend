@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-import { Input, Button, Upload, Icon, Modal} from 'antd';
+// import axios from 'axios';
+import { Input, Button, Upload, Icon, Modal, message} from 'antd';
 import ReactQuill from 'react-quill'; // 富文本
 import 'react-quill/dist/quill.snow.css'; // 富文本
-import Cookie from 'js-cookie'
+import Cookie from 'js-cookie';
+import { connect } from 'react-redux';
 
 class Add extends Component {
   
@@ -41,16 +42,18 @@ class Add extends Component {
   // 新增文章
   submitCon() {
     let _this = this;
-    axios.post('http://127.0.0.1:3003/api/add',{
-      post_id: _this.state.id,
-      post_title: _this.state.title,
-      post_con: _this.state.text,
-      pic_data: _this.state.pic_data,
-      name: Cookie.get("name")
-    }).then(function(response) {
-      console.log(response.data)
-      _this.props.history.goBack()
-    })
+    let params = {
+      post_id: this.state.id,
+      post_title: this.state.title,
+      post_con: this.state.text,
+      pic_data: this.state.pic_data,
+      name: Cookie.get("name"),
+      onSuccess(){
+        message.success('添加成功');
+        _this.props.history.goBack();
+      },
+    }
+    this.props.dispatch({ type: 'skills/addOne' , payload: params });
   }
 
   handleCancel = () => this.setState({ previewVisible: false })
@@ -145,5 +148,9 @@ Add.formats = [
   'link', 'image', 'video'
 ]
 
+const mapStateToProps = state => ({
+  loading: state.loading.effects['skills/addOne'],
+});
 
-export default Add;
+
+export default connect(mapStateToProps)(Add);

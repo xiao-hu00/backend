@@ -1,11 +1,20 @@
 import React, { Component } from 'react';
 import { HashRouter as Router, Link} from 'react-router-dom'
-import { Table, Button, Popconfirm, message } from 'antd';
+import { Table, Button, Popconfirm, message, Pagination } from 'antd';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
-import axios from 'axios';
 const { Column } = Table;
+const { shape, string, arrayOf, number, func, bool } = PropTypes;
 
 class Skill extends Component {
+  static propTypes = {
+    match: shape({ url: string }),
+    dispatch: func.isRequired,
+    list: arrayOf(shape()).isRequired,
+    loading: bool,
+    current: number
+  };
   constructor(props){
     super(props)
     this.deleteItem = this.deleteItem.bind(this)
@@ -19,14 +28,16 @@ class Skill extends Component {
     delete_id: ''
   };
   confirm(){
-    let _this = this;
-    axios.post('http://127.0.0.1:3003/api/delete',{
-      id: _this.state.delete_id
-    })
-    .then((data) => {
-      message.success(data.data.msg)
-      _this.fetch();
-    })
+    let params = {
+      id: this.state.delete_id,
+      onSuccess(msg){
+        message.success(msg)
+      },
+      onError(msg){
+        message.success(msg)
+      }
+    }
+    this.props.dispatch({ type: 'skills/deleteOne' , payload: params });
   }
   cancel(){
     message.info("取消删除该条数据")
@@ -38,47 +49,30 @@ class Skill extends Component {
     })
   }
 
-	handleTableChange = (pagination, filters) => {
-    const pager = { ...this.state.pagination };
-    pager.current = pagination.current;
-    this.setState({
-      pagination: pager,
-    });
-    this.fetch({
-      // results: pagination.pageSize,
-      page: pagination.current,
-      ...filters,
-    });
+	handleTableChange = (pagination) => {
+    this.setState({current: pagination})
+    this.fetch({page: pagination});
   }
-  fetch = (params = {}) => {
+  fetch = (params = {page: 1}) => {
     this.setState({ loading: true });
-    axios.post('http://127.0.0.1:3003/api/list',{
-    	page: params.page || 1,
-      page_size: 10
-    })
-  	.then((data) => {
-      const pagination = { ...this.state.pagination };
-      pagination.total = parseInt(data.data.data.total, 10);
-      this.setState({
-        loading: false,
-        data: data.data.data.list,
-        pagination,
-      });
-    });
+    this.props.dispatch({ type: 'skills/queryAll' , payload: params});
+  }
+  componentWillReceiveProps(){
+    // console.log(this.props)
   }
   componentDidMount() {
     this.fetch();
   }
   render() {
+    const { list, total, current, loading } = this.props;
     return (
       <div className="list-con">
         <Button type="primary"><Link to="/add">新增</Link></Button>  
       	<Table 
       	  rowKey={record => record.post_id}
-      	  dataSource={this.state.data}
-      	  pagination={this.state.pagination}
-      	  loading={this.state.loading}
-      	  onChange={this.handleTableChange}
+      	  dataSource={list}
+      	  pagination={false}
+      	  loading={loading}      	  
           >
           <Column
               title="编号"
@@ -115,10 +109,22 @@ class Skill extends Component {
               )}
             />
       	</Table>
+        <Pagination
+          className="ant-table-pagination"
+          total={total}
+          current={current}
+          onChange={this.handleTableChange}
+        />
       </div>
     );
   }
 }
 
+const mapStateToProps = state => ({
+  list: state.skills.list,
+  total: state.skills.total,
+  current: state.skills.current,
+  loading: state.loading.effects['skills/queryAll'],
+});
 
-export default Skill;
+export default connect(mapStateToProps)(Skill);
